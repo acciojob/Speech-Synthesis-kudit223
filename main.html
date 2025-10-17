@@ -29,13 +29,68 @@
     </div>
 
 <script>
-  const msg = new SpeechSynthesisUtterance();
+ // Your script here.
+const msg = new SpeechSynthesisUtterance();
   let voices = [];
   const voicesDropdown = document.querySelector('[name="voice"]');
   const options = document.querySelectorAll('[type="range"], [name="text"]');
   const speakButton = document.querySelector('#speak');
   const stopButton = document.querySelector('#stop');
+  let option;
 
+  const textarea=options[2];
+  const pitch=options[1];
+  const rate=options[0];
+  let selectedIndex;
+
+  
+
+speakButton.addEventListener('click',(e)=>{
+  selectedIndex=voicesDropdown.selectedIndex;
+
+  msg.text=textarea.value;
+  msg.pitch=pitch.value;
+  msg.rate=rate.value;
+  msg.voice=voices[selectedIndex-1];
+ 
+  if(msg.text=="")
+  console.log("write text in textarea");
+  
+  else if(msg.voice==undefined||selectedIndex==0)
+  console.log("choose voice options");
+
+  else
+  window.speechSynthesis.speak(msg)
+  
+})  
+
+stopButton.addEventListener('click',(e)=>{
+  window.speechSynthesis.cancel();
+})
+
+window.speechSynthesis.onvoiceschanged=()=>{
+  voices=window.speechSynthesis.getVoices();
+  voices.forEach(voice=>{
+    voicesDropdown.innerHTML+=`<option value="">${voice.name}</option>`
+  });
+}
+
+voicesDropdown.addEventListener('change',()=>{
+
+  if(window.speechSynthesis.speaking){
+  selectedIndex=voicesDropdown.selectedIndex;
+
+  window.speechSynthesis.cancel();
+  msg.text=textarea.value;
+  msg.voice=voices[selectedIndex-1];
+  
+  if(selectedIndex==0)
+  console.log("choose voice options");
+  else 
+  window.speechSynthesis.speak(msg);
+  }
+
+})
   //Your code goes here
 </script>
 
